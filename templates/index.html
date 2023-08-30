@@ -46,10 +46,27 @@
         li {
             margin: 5px;
         }
+    
+        .success-message {
+            color: green;
+        }
+        .error-message {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <h1>S3 File Manager</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ 'success-message' if category == 'success' else 'error-message' }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
     <h2>List S3 Buckets</h2>
     <form action="/list" method="get">
@@ -66,12 +83,33 @@
         <input type="text" name="bucket_name" placeholder="Enter bucket name">
         <button type="submit">Create Bucket</button>
     </form>
-    
-        <h2>Delete Bucket</h2>
+
+
+    <h2>Delete Bucket</h2>
     <form action="/delete_bucket" method="post">
         <input type="text" name="bucket_name" placeholder="Enter bucket name">
         <button type="submit">Delete Bucket</button>
     </form>
+
+    <h2>List Bucket Content</h2>
+        <form action="/list_content" method="post">
+            <input type="text" name="bucket_name" placeholder="Enter bucket name">
+            <button type="submit">List Content</button>
+        </form>
+        
+        {% if content_list %}
+            <h3>Content of Bucket "{{ bucket_name }}"</h3>
+            <ul>
+                {% for content in content_list %}
+                    <li>{{ content }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            {% if bucket_name %}
+                <p>No content found in Bucket "{{ bucket_name }}"</p>
+            {% endif %}
+        {% endif %}
+
 
     <h2>Upload File</h2>
     <form action="/upload_file" method="post" enctype="multipart/form-data">
@@ -87,11 +125,12 @@
         <button type="submit">Delete File</button>
     </form>
 
-    <h2>Copy File</h2>
-    <form action="/copy_file" method="post">
+   <h2>Copy File</h2>
+   <form action="/copy_file" method="post">
         <input type="text" name="source_key" placeholder="Enter source file key">
         <input type="text" name="destination_key" placeholder="Enter destination file key">
-        <input type="text" name="bucket_name" placeholder="Enter bucket name">
+        <input type="text" name="source_bucket" placeholder="Enter source bucket name">
+        <input type="text" name="destination_bucket" placeholder="Enter destination bucket name">
         <button type="submit">Copy File</button>
     </form>
 
@@ -99,12 +138,11 @@
     <form action="/move_file" method="post">
         <input type="text" name="source_key" placeholder="Enter source file key">
         <input type="text" name="destination_key" placeholder="Enter destination file key">
-        <input type="text" name="bucket_name" placeholder="Enter bucket name">
+        <input type="text" name="source_bucket" placeholder="Enter source bucket name">
+        <input type="text" name="destination_bucket" placeholder="Enter destination bucket name">
         <button type="submit">Move File</button>
-        
-      </form>
+    </form>
 
-    
 
 </body>
 </html>
