@@ -8,7 +8,7 @@ app = Flask(__name__)
 secret_key = secrets.token_hex(16)
 app.config['SECRET_KEY'] = secret_key
 
-s3 = boto3.client('s3', aws_access_key_id='AKIAV4WDUNFH53WM7F7O', aws_secret_access_key='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')
+s3 = boto3.client('s3')
 
 
 @app.route('/')
